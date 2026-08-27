@@ -10,33 +10,123 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as LanguageRouteImport } from './routes/language'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppBookRouteImport } from './routes/app.book'
+import { Route as AppCentresRouteImport } from './routes/app.centres'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LanguageRoute = LanguageRouteImport.update({
+  id: '/language',
+  path: '/language',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBookRoute = AppBookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCentresRoute = AppCentresRouteImport.update({
+  id: '/centres',
+  path: '/centres',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/language': typeof LanguageRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/app/book': typeof AppBookRoute
+  '/app/centres': typeof AppCentresRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/language': typeof LanguageRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/app/book': typeof AppBookRoute
+  '/app/centres': typeof AppCentresRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/language': typeof LanguageRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/app/book': typeof AppBookRoute
+  '/app/centres': typeof AppCentresRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/language'
+    | '/login'
+    | '/register'
+    | '/app/book'
+    | '/app/centres'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/language'
+    | '/login'
+    | '/register'
+    | '/app/book'
+    | '/app/centres'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/language'
+    | '/login'
+    | '/register'
+    | '/app/book'
+    | '/app/centres'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LanguageRoute: typeof LanguageRoute
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +138,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/language': {
+      id: '/language'
+      path: '/language'
+      fullPath: '/language'
+      preLoaderRoute: typeof LanguageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/book': {
+      id: '/app/book'
+      path: '/book'
+      fullPath: '/app/book'
+      preLoaderRoute: typeof AppBookRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/centres': {
+      id: '/app/centres'
+      path: '/centres'
+      fullPath: '/app/centres'
+      preLoaderRoute: typeof AppCentresRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppBookRoute: typeof AppBookRoute
+  AppCentresRoute: typeof AppCentresRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppBookRoute: AppBookRoute,
+  AppCentresRoute: AppCentresRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LanguageRoute: LanguageRoute,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
