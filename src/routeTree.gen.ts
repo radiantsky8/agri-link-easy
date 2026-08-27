@@ -15,6 +15,7 @@ import { Route as LanguageRouteImport } from './routes/language'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppCentresRouteImport } from './routes/app.centres'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCentresRoute = AppCentresRouteImport.update({
+  id: '/centres',
+  path: '/centres',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/centres': typeof AppCentresRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/centres': typeof AppCentresRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -69,14 +77,30 @@ export interface FileRoutesById {
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/centres': typeof AppCentresRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/language' | '/login' | '/register' | '/app/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/language'
+    | '/login'
+    | '/register'
+    | '/app/centres'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/language' | '/login' | '/register' | '/app'
-  id: '__root__' | '/' | '/app' | '/language' | '/login' | '/register' | '/app/'
+  to: '/' | '/language' | '/login' | '/register' | '/app/centres' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/language'
+    | '/login'
+    | '/register'
+    | '/app/centres'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -131,14 +155,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/centres': {
+      id: '/app/centres'
+      path: '/centres'
+      fullPath: '/app/centres'
+      preLoaderRoute: typeof AppCentresRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppCentresRoute: typeof AppCentresRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppCentresRoute: AppCentresRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
