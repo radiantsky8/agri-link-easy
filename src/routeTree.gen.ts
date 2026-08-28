@@ -18,6 +18,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppBookRouteImport } from './routes/app.book'
 import { Route as AppCentresRouteImport } from './routes/app.centres'
 import { Route as AppPaymentRouteImport } from './routes/app.payment'
+import { Route as AppPaymentsCompletedRouteImport } from './routes/app.payments-completed'
 import { Route as AppProcurementRouteImport } from './routes/app.procurement'
 import { Route as AppQueueRouteImport } from './routes/app.queue'
 import { Route as AppTokenRouteImport } from './routes/app.token'
@@ -67,6 +68,11 @@ const AppPaymentRoute = AppPaymentRouteImport.update({
   path: '/payment',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPaymentsCompletedRoute = AppPaymentsCompletedRouteImport.update({
+  id: '/payments-completed',
+  path: '/payments-completed',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProcurementRoute = AppProcurementRouteImport.update({
   id: '/procurement',
   path: '/procurement',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
   '/app/payment': typeof AppPaymentRoute
+  '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
   '/app/payment': typeof AppPaymentRoute
+  '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
   '/app/payment': typeof AppPaymentRoute
+  '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/app/book'
     | '/app/centres'
     | '/app/payment'
+    | '/app/payments-completed'
     | '/app/procurement'
     | '/app/queue'
     | '/app/token'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/app/book'
     | '/app/centres'
     | '/app/payment'
+    | '/app/payments-completed'
     | '/app/procurement'
     | '/app/queue'
     | '/app/token'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/app/book'
     | '/app/centres'
     | '/app/payment'
+    | '/app/payments-completed'
     | '/app/procurement'
     | '/app/queue'
     | '/app/token'
@@ -242,6 +254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPaymentRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/payments-completed': {
+      id: '/app/payments-completed'
+      path: '/payments-completed'
+      fullPath: '/app/payments-completed'
+      preLoaderRoute: typeof AppPaymentsCompletedRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/procurement': {
       id: '/app/procurement'
       path: '/procurement'
@@ -270,6 +289,7 @@ interface AppRouteChildren {
   AppBookRoute: typeof AppBookRoute
   AppCentresRoute: typeof AppCentresRoute
   AppPaymentRoute: typeof AppPaymentRoute
+  AppPaymentsCompletedRoute: typeof AppPaymentsCompletedRoute
   AppProcurementRoute: typeof AppProcurementRoute
   AppQueueRoute: typeof AppQueueRoute
   AppTokenRoute: typeof AppTokenRoute
@@ -280,6 +300,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBookRoute: AppBookRoute,
   AppCentresRoute: AppCentresRoute,
   AppPaymentRoute: AppPaymentRoute,
+  AppPaymentsCompletedRoute: AppPaymentsCompletedRoute,
   AppProcurementRoute: AppProcurementRoute,
   AppQueueRoute: AppQueueRoute,
   AppTokenRoute: AppTokenRoute,
