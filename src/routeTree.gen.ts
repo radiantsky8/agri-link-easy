@@ -17,6 +17,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppBookRouteImport } from './routes/app.book'
 import { Route as AppCentresRouteImport } from './routes/app.centres'
+import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppPaymentRouteImport } from './routes/app.payment'
 import { Route as AppPaymentsCompletedRouteImport } from './routes/app.payments-completed'
 import { Route as AppProcurementRouteImport } from './routes/app.procurement'
@@ -63,6 +64,11 @@ const AppCentresRoute = AppCentresRouteImport.update({
   path: '/centres',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPaymentRoute = AppPaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/notifications'
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/notifications'
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/notifications'
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
@@ -247,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCentresRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/notifications': {
+      id: '/app/notifications'
+      path: '/notifications'
+      fullPath: '/app/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/payment': {
       id: '/app/payment'
       path: '/payment'
@@ -288,6 +307,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppBookRoute: typeof AppBookRoute
   AppCentresRoute: typeof AppCentresRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
   AppPaymentRoute: typeof AppPaymentRoute
   AppPaymentsCompletedRoute: typeof AppPaymentsCompletedRoute
   AppProcurementRoute: typeof AppProcurementRoute
@@ -299,6 +319,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppBookRoute: AppBookRoute,
   AppCentresRoute: AppCentresRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
   AppPaymentRoute: AppPaymentRoute,
   AppPaymentsCompletedRoute: AppPaymentsCompletedRoute,
   AppProcurementRoute: AppProcurementRoute,
