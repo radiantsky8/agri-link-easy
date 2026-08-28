@@ -17,6 +17,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppBookRouteImport } from './routes/app.book'
 import { Route as AppCentresRouteImport } from './routes/app.centres'
+import { Route as AppPaymentRouteImport } from './routes/app.payment'
 import { Route as AppProcurementRouteImport } from './routes/app.procurement'
 import { Route as AppQueueRouteImport } from './routes/app.queue'
 import { Route as AppTokenRouteImport } from './routes/app.token'
@@ -61,6 +62,11 @@ const AppCentresRoute = AppCentresRouteImport.update({
   path: '/centres',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPaymentRoute = AppPaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProcurementRoute = AppProcurementRouteImport.update({
   id: '/procurement',
   path: '/procurement',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/payment': typeof AppPaymentRoute
   '/app/procurement': typeof AppProcurementRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/payment': typeof AppPaymentRoute
   '/app/procurement': typeof AppProcurementRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/payment': typeof AppPaymentRoute
   '/app/procurement': typeof AppProcurementRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/payment'
     | '/app/procurement'
     | '/app/queue'
     | '/app/token'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/payment'
     | '/app/procurement'
     | '/app/queue'
     | '/app/token'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/payment'
     | '/app/procurement'
     | '/app/queue'
     | '/app/token'
@@ -223,6 +235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCentresRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/payment': {
+      id: '/app/payment'
+      path: '/payment'
+      fullPath: '/app/payment'
+      preLoaderRoute: typeof AppPaymentRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/procurement': {
       id: '/app/procurement'
       path: '/procurement'
@@ -250,6 +269,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppBookRoute: typeof AppBookRoute
   AppCentresRoute: typeof AppCentresRoute
+  AppPaymentRoute: typeof AppPaymentRoute
   AppProcurementRoute: typeof AppProcurementRoute
   AppQueueRoute: typeof AppQueueRoute
   AppTokenRoute: typeof AppTokenRoute
@@ -259,6 +279,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppBookRoute: AppBookRoute,
   AppCentresRoute: AppCentresRoute,
+  AppPaymentRoute: AppPaymentRoute,
   AppProcurementRoute: AppProcurementRoute,
   AppQueueRoute: AppQueueRoute,
   AppTokenRoute: AppTokenRoute,
