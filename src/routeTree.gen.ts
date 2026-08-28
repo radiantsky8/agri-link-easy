@@ -17,6 +17,14 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppBookRouteImport } from './routes/app.book'
 import { Route as AppCentresRouteImport } from './routes/app.centres'
+import { Route as AppHistoryRouteImport } from './routes/app.history'
+import { Route as AppMoreRouteImport } from './routes/app.more'
+import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
+import { Route as AppPaymentRouteImport } from './routes/app.payment'
+import { Route as AppPaymentsCompletedRouteImport } from './routes/app.payments-completed'
+import { Route as AppProcurementRouteImport } from './routes/app.procurement'
+import { Route as AppQueueRouteImport } from './routes/app.queue'
+import { Route as AppTokenRouteImport } from './routes/app.token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +66,46 @@ const AppCentresRoute = AppCentresRouteImport.update({
   path: '/centres',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHistoryRoute = AppHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMoreRoute = AppMoreRouteImport.update({
+  id: '/more',
+  path: '/more',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaymentRoute = AppPaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaymentsCompletedRoute = AppPaymentsCompletedRouteImport.update({
+  id: '/payments-completed',
+  path: '/payments-completed',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProcurementRoute = AppProcurementRouteImport.update({
+  id: '/procurement',
+  path: '/procurement',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQueueRoute = AppQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTokenRoute = AppTokenRouteImport.update({
+  id: '/token',
+  path: '/token',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +115,14 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/history': typeof AppHistoryRoute
+  '/app/more': typeof AppMoreRoute
+  '/app/notifications': typeof AppNotificationsRoute
+  '/app/payment': typeof AppPaymentRoute
+  '/app/payments-completed': typeof AppPaymentsCompletedRoute
+  '/app/procurement': typeof AppProcurementRoute
+  '/app/queue': typeof AppQueueRoute
+  '/app/token': typeof AppTokenRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -76,6 +132,14 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/history': typeof AppHistoryRoute
+  '/app/more': typeof AppMoreRoute
+  '/app/notifications': typeof AppNotificationsRoute
+  '/app/payment': typeof AppPaymentRoute
+  '/app/payments-completed': typeof AppPaymentsCompletedRoute
+  '/app/procurement': typeof AppProcurementRoute
+  '/app/queue': typeof AppQueueRoute
+  '/app/token': typeof AppTokenRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -87,6 +151,14 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/history': typeof AppHistoryRoute
+  '/app/more': typeof AppMoreRoute
+  '/app/notifications': typeof AppNotificationsRoute
+  '/app/payment': typeof AppPaymentRoute
+  '/app/payments-completed': typeof AppPaymentsCompletedRoute
+  '/app/procurement': typeof AppProcurementRoute
+  '/app/queue': typeof AppQueueRoute
+  '/app/token': typeof AppTokenRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -99,6 +171,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/history'
+    | '/app/more'
+    | '/app/notifications'
+    | '/app/payment'
+    | '/app/payments-completed'
+    | '/app/procurement'
+    | '/app/queue'
+    | '/app/token'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,6 +188,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/history'
+    | '/app/more'
+    | '/app/notifications'
+    | '/app/payment'
+    | '/app/payments-completed'
+    | '/app/procurement'
+    | '/app/queue'
+    | '/app/token'
     | '/app'
   id:
     | '__root__'
@@ -118,6 +206,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/app/book'
     | '/app/centres'
+    | '/app/history'
+    | '/app/more'
+    | '/app/notifications'
+    | '/app/payment'
+    | '/app/payments-completed'
+    | '/app/procurement'
+    | '/app/queue'
+    | '/app/token'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
@@ -187,18 +283,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCentresRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/history': {
+      id: '/app/history'
+      path: '/history'
+      fullPath: '/app/history'
+      preLoaderRoute: typeof AppHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/more': {
+      id: '/app/more'
+      path: '/more'
+      fullPath: '/app/more'
+      preLoaderRoute: typeof AppMoreRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/notifications': {
+      id: '/app/notifications'
+      path: '/notifications'
+      fullPath: '/app/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/payment': {
+      id: '/app/payment'
+      path: '/payment'
+      fullPath: '/app/payment'
+      preLoaderRoute: typeof AppPaymentRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/payments-completed': {
+      id: '/app/payments-completed'
+      path: '/payments-completed'
+      fullPath: '/app/payments-completed'
+      preLoaderRoute: typeof AppPaymentsCompletedRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/procurement': {
+      id: '/app/procurement'
+      path: '/procurement'
+      fullPath: '/app/procurement'
+      preLoaderRoute: typeof AppProcurementRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/queue': {
+      id: '/app/queue'
+      path: '/queue'
+      fullPath: '/app/queue'
+      preLoaderRoute: typeof AppQueueRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/token': {
+      id: '/app/token'
+      path: '/token'
+      fullPath: '/app/token'
+      preLoaderRoute: typeof AppTokenRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppBookRoute: typeof AppBookRoute
   AppCentresRoute: typeof AppCentresRoute
+  AppHistoryRoute: typeof AppHistoryRoute
+  AppMoreRoute: typeof AppMoreRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
+  AppPaymentRoute: typeof AppPaymentRoute
+  AppPaymentsCompletedRoute: typeof AppPaymentsCompletedRoute
+  AppProcurementRoute: typeof AppProcurementRoute
+  AppQueueRoute: typeof AppQueueRoute
+  AppTokenRoute: typeof AppTokenRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppBookRoute: AppBookRoute,
   AppCentresRoute: AppCentresRoute,
+  AppHistoryRoute: AppHistoryRoute,
+  AppMoreRoute: AppMoreRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
+  AppPaymentRoute: AppPaymentRoute,
+  AppPaymentsCompletedRoute: AppPaymentsCompletedRoute,
+  AppProcurementRoute: AppProcurementRoute,
+  AppQueueRoute: AppQueueRoute,
+  AppTokenRoute: AppTokenRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
