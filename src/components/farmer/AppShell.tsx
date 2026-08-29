@@ -96,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               )}
               <nav className="flex flex-col gap-0.5 px-3 pb-6">
                 {NAV.map((item) => {
-                  const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+                  const active = "exact" in item ? pathname === item.to : pathname.startsWith(item.to);
                   return (
                     <Link
                       key={item.to}

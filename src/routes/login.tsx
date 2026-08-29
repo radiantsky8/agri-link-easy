@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useFarmer } from "@/lib/farmer/store";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { mobile?: string | undefined } => ({
     mobile: typeof search["mobile"] === "string" ? search["mobile"] : undefined,
   }),
   head: () => ({

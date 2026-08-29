@@ -15,14 +15,19 @@ import { Route as LanguageRouteImport } from './routes/language'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppBankRouteImport } from './routes/app.bank'
 import { Route as AppBookRouteImport } from './routes/app.book'
 import { Route as AppCentresRouteImport } from './routes/app.centres'
+import { Route as AppComplaintRouteImport } from './routes/app.complaint'
+import { Route as AppFaqRouteImport } from './routes/app.faq'
 import { Route as AppHistoryRouteImport } from './routes/app.history'
+import { Route as AppLanguageRouteImport } from './routes/app.language'
 import { Route as AppMoreRouteImport } from './routes/app.more'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppPaymentRouteImport } from './routes/app.payment'
 import { Route as AppPaymentsCompletedRouteImport } from './routes/app.payments-completed'
 import { Route as AppProcurementRouteImport } from './routes/app.procurement'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppQueueRouteImport } from './routes/app.queue'
 import { Route as AppTokenRouteImport } from './routes/app.token'
 
@@ -56,6 +61,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBankRoute = AppBankRouteImport.update({
+  id: '/bank',
+  path: '/bank',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBookRoute = AppBookRouteImport.update({
   id: '/book',
   path: '/book',
@@ -66,9 +76,24 @@ const AppCentresRoute = AppCentresRouteImport.update({
   path: '/centres',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComplaintRoute = AppComplaintRouteImport.update({
+  id: '/complaint',
+  path: '/complaint',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFaqRoute = AppFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppHistoryRoute = AppHistoryRouteImport.update({
   id: '/history',
   path: '/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLanguageRoute = AppLanguageRouteImport.update({
+  id: '/language',
+  path: '/language',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMoreRoute = AppMoreRouteImport.update({
@@ -96,6 +121,11 @@ const AppProcurementRoute = AppProcurementRouteImport.update({
   path: '/procurement',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppQueueRoute = AppQueueRouteImport.update({
   id: '/queue',
   path: '/queue',
@@ -113,14 +143,19 @@ export interface FileRoutesByFullPath {
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/bank': typeof AppBankRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/complaint': typeof AppComplaintRoute
+  '/app/faq': typeof AppFaqRoute
   '/app/history': typeof AppHistoryRoute
+  '/app/language': typeof AppLanguageRoute
   '/app/more': typeof AppMoreRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
   '/app/': typeof AppIndexRoute
@@ -130,14 +165,19 @@ export interface FileRoutesByTo {
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/bank': typeof AppBankRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/complaint': typeof AppComplaintRoute
+  '/app/faq': typeof AppFaqRoute
   '/app/history': typeof AppHistoryRoute
+  '/app/language': typeof AppLanguageRoute
   '/app/more': typeof AppMoreRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
   '/app': typeof AppIndexRoute
@@ -149,14 +189,19 @@ export interface FileRoutesById {
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/bank': typeof AppBankRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/complaint': typeof AppComplaintRoute
+  '/app/faq': typeof AppFaqRoute
   '/app/history': typeof AppHistoryRoute
+  '/app/language': typeof AppLanguageRoute
   '/app/more': typeof AppMoreRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
   '/app/': typeof AppIndexRoute
@@ -169,14 +214,19 @@ export interface FileRouteTypes {
     | '/language'
     | '/login'
     | '/register'
+    | '/app/bank'
     | '/app/book'
     | '/app/centres'
+    | '/app/complaint'
+    | '/app/faq'
     | '/app/history'
+    | '/app/language'
     | '/app/more'
     | '/app/notifications'
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
+    | '/app/profile'
     | '/app/queue'
     | '/app/token'
     | '/app/'
@@ -186,14 +236,19 @@ export interface FileRouteTypes {
     | '/language'
     | '/login'
     | '/register'
+    | '/app/bank'
     | '/app/book'
     | '/app/centres'
+    | '/app/complaint'
+    | '/app/faq'
     | '/app/history'
+    | '/app/language'
     | '/app/more'
     | '/app/notifications'
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
+    | '/app/profile'
     | '/app/queue'
     | '/app/token'
     | '/app'
@@ -204,14 +259,19 @@ export interface FileRouteTypes {
     | '/language'
     | '/login'
     | '/register'
+    | '/app/bank'
     | '/app/book'
     | '/app/centres'
+    | '/app/complaint'
+    | '/app/faq'
     | '/app/history'
+    | '/app/language'
     | '/app/more'
     | '/app/notifications'
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
+    | '/app/profile'
     | '/app/queue'
     | '/app/token'
     | '/app/'
@@ -269,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/bank': {
+      id: '/app/bank'
+      path: '/bank'
+      fullPath: '/app/bank'
+      preLoaderRoute: typeof AppBankRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/book': {
       id: '/app/book'
       path: '/book'
@@ -283,11 +350,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCentresRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/complaint': {
+      id: '/app/complaint'
+      path: '/complaint'
+      fullPath: '/app/complaint'
+      preLoaderRoute: typeof AppComplaintRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/faq': {
+      id: '/app/faq'
+      path: '/faq'
+      fullPath: '/app/faq'
+      preLoaderRoute: typeof AppFaqRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/history': {
       id: '/app/history'
       path: '/history'
       fullPath: '/app/history'
       preLoaderRoute: typeof AppHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/language': {
+      id: '/app/language'
+      path: '/language'
+      fullPath: '/app/language'
+      preLoaderRoute: typeof AppLanguageRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/more': {
@@ -325,6 +413,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProcurementRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/queue': {
       id: '/app/queue'
       path: '/queue'
@@ -343,28 +438,38 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppBankRoute: typeof AppBankRoute
   AppBookRoute: typeof AppBookRoute
   AppCentresRoute: typeof AppCentresRoute
+  AppComplaintRoute: typeof AppComplaintRoute
+  AppFaqRoute: typeof AppFaqRoute
   AppHistoryRoute: typeof AppHistoryRoute
+  AppLanguageRoute: typeof AppLanguageRoute
   AppMoreRoute: typeof AppMoreRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppPaymentRoute: typeof AppPaymentRoute
   AppPaymentsCompletedRoute: typeof AppPaymentsCompletedRoute
   AppProcurementRoute: typeof AppProcurementRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppQueueRoute: typeof AppQueueRoute
   AppTokenRoute: typeof AppTokenRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppBankRoute: AppBankRoute,
   AppBookRoute: AppBookRoute,
   AppCentresRoute: AppCentresRoute,
+  AppComplaintRoute: AppComplaintRoute,
+  AppFaqRoute: AppFaqRoute,
   AppHistoryRoute: AppHistoryRoute,
+  AppLanguageRoute: AppLanguageRoute,
   AppMoreRoute: AppMoreRoute,
   AppNotificationsRoute: AppNotificationsRoute,
   AppPaymentRoute: AppPaymentRoute,
   AppPaymentsCompletedRoute: AppPaymentsCompletedRoute,
   AppProcurementRoute: AppProcurementRoute,
+  AppProfileRoute: AppProfileRoute,
   AppQueueRoute: AppQueueRoute,
   AppTokenRoute: AppTokenRoute,
   AppIndexRoute: AppIndexRoute,

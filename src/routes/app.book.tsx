@@ -13,7 +13,7 @@ import { amountFor, centreName, cropName, formatMoney, formatQty, useFarmer } fr
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/book")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { centre?: string | undefined; reschedule?: string | undefined } => ({
     centre: typeof search["centre"] === "string" ? search["centre"] : undefined,
     reschedule: typeof search["reschedule"] === "string" ? search["reschedule"] : undefined,
   }),

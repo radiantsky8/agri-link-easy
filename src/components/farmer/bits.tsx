@@ -13,7 +13,7 @@ const TONES = {
 
 export type Tone = keyof typeof TONES;
 
-export function Pill({ tone = "neutral", children }: { tone?: Tone; children: ReactNode }) {
+export function Pill({ tone = "neutral", children }: { tone?: Tone | undefined; children: ReactNode }) {
   return (
     <span
       className={cn(
