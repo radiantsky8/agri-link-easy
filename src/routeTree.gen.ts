@@ -18,6 +18,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppBankRouteImport } from './routes/app.bank'
 import { Route as AppBookRouteImport } from './routes/app.book'
 import { Route as AppCentresRouteImport } from './routes/app.centres'
+import { Route as AppFaqRouteImport } from './routes/app.faq'
 import { Route as AppHistoryRouteImport } from './routes/app.history'
 import { Route as AppLanguageRouteImport } from './routes/app.language'
 import { Route as AppMoreRouteImport } from './routes/app.more'
@@ -72,6 +73,11 @@ const AppBookRoute = AppBookRouteImport.update({
 const AppCentresRoute = AppCentresRouteImport.update({
   id: '/centres',
   path: '/centres',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFaqRoute = AppFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => AppRoute,
 } as any)
 const AppHistoryRoute = AppHistoryRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/app/bank': typeof AppBankRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/faq': typeof AppFaqRoute
   '/app/history': typeof AppHistoryRoute
   '/app/language': typeof AppLanguageRoute
   '/app/more': typeof AppMoreRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/app/bank': typeof AppBankRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/faq': typeof AppFaqRoute
   '/app/history': typeof AppHistoryRoute
   '/app/language': typeof AppLanguageRoute
   '/app/more': typeof AppMoreRoute
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   '/app/bank': typeof AppBankRoute
   '/app/book': typeof AppBookRoute
   '/app/centres': typeof AppCentresRoute
+  '/app/faq': typeof AppFaqRoute
   '/app/history': typeof AppHistoryRoute
   '/app/language': typeof AppLanguageRoute
   '/app/more': typeof AppMoreRoute
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/app/bank'
     | '/app/book'
     | '/app/centres'
+    | '/app/faq'
     | '/app/history'
     | '/app/language'
     | '/app/more'
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/app/bank'
     | '/app/book'
     | '/app/centres'
+    | '/app/faq'
     | '/app/history'
     | '/app/language'
     | '/app/more'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/app/bank'
     | '/app/book'
     | '/app/centres'
+    | '/app/faq'
     | '/app/history'
     | '/app/language'
     | '/app/more'
@@ -326,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCentresRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/faq': {
+      id: '/app/faq'
+      path: '/faq'
+      fullPath: '/app/faq'
+      preLoaderRoute: typeof AppFaqRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/history': {
       id: '/app/history'
       path: '/history'
@@ -403,6 +422,7 @@ interface AppRouteChildren {
   AppBankRoute: typeof AppBankRoute
   AppBookRoute: typeof AppBookRoute
   AppCentresRoute: typeof AppCentresRoute
+  AppFaqRoute: typeof AppFaqRoute
   AppHistoryRoute: typeof AppHistoryRoute
   AppLanguageRoute: typeof AppLanguageRoute
   AppMoreRoute: typeof AppMoreRoute
@@ -420,6 +440,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBankRoute: AppBankRoute,
   AppBookRoute: AppBookRoute,
   AppCentresRoute: AppCentresRoute,
+  AppFaqRoute: AppFaqRoute,
   AppHistoryRoute: AppHistoryRoute,
   AppLanguageRoute: AppLanguageRoute,
   AppMoreRoute: AppMoreRoute,
