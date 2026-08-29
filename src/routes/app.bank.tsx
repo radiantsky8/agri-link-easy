@@ -133,7 +133,7 @@ function BankPage() {
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error?: string | undefined; children: React.ReactNode }) {
   return (
     <div>
       <Label className="mb-2 block text-sm font-medium">{label}</Label>
