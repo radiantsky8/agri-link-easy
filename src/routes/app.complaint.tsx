@@ -24,7 +24,7 @@ export const Route = createFileRoute("/app/complaint")({
 const schema = z.object({
   subject: z.string().trim().min(4, "Add a short subject").max(120, "Subject is too long"),
   description: z.string().trim().min(10, "Tell us a little more").max(1000, "Keep it under 1000 characters"),
-  bookingRef: z.string().trim().max(40).optional(),
+  bookingRef: z.string().trim().max(40).default(""),
 });
 
 /** Raise a support complaint, optionally linked to a booking token. */
