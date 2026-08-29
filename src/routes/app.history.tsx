@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 import { PageHeader } from "@/components/farmer/AppShell";
-import { EmptyState, Pill, Surface, bookingTone, labelize } from "@/components/farmer/bits";
+import { BackButton, EmptyState, Pill, Surface, bookingTone, labelize } from "@/components/farmer/bits";
 import { centreName, cropName, formatDate, formatMoney, formatQty, useFarmer } from "@/lib/farmer/store";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +27,7 @@ function HistoryPage() {
 
   return (
     <div>
+      <BackButton />
       <PageHeader
         eyebrow="Booking history"
         title="Every visit"

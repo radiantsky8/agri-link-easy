@@ -3,7 +3,7 @@ import { ArrowRight, CalendarClock, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/farmer/AppShell";
-import { EmptyState, Pill, Surface, bookingTone, labelize } from "@/components/farmer/bits";
+import { BackButton, EmptyState, Pill, Surface, bookingTone, labelize } from "@/components/farmer/bits";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +33,7 @@ function TokenPage() {
   if (!active) {
     return (
       <div>
+        <BackButton />
         <PageHeader eyebrow="My token" title="No active" accent="token." />
         <EmptyState title="Nothing booked right now" body="Book a slot and your token will appear here." />
         <Link

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
 import { PageHeader } from "@/components/farmer/AppShell";
-import { EmptyState, Pill, Surface, bookingTone, labelize } from "@/components/farmer/bits";
+import { BackButton, EmptyState, Pill, Surface, bookingTone, labelize } from "@/components/farmer/bits";
 import { centreName, cropName, formatDate, formatQty, useFarmer } from "@/lib/farmer/store";
 
 export const Route = createFileRoute("/app/procurement")({
@@ -18,6 +18,7 @@ function ProcurementStatus() {
 
   return (
     <div>
+      <BackButton />
       <PageHeader
         eyebrow="Procurement"
         title="Where each load"

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ReceiptText } from "lucide-react";
 
 import { PageHeader } from "@/components/farmer/AppShell";
-import { EmptyState, Surface } from "@/components/farmer/bits";
+import { BackButton, EmptyState, Surface } from "@/components/farmer/bits";
 import { centreName, cropName, formatDate, formatMoney, formatQty, useFarmer } from "@/lib/farmer/store";
 
 export const Route = createFileRoute("/app/payments-completed")({
@@ -17,6 +17,7 @@ function PaymentsCompleted() {
 
   return (
     <div>
+      <BackButton />
       <PageHeader
         eyebrow="Payments completed"
         title="Your receipts,"

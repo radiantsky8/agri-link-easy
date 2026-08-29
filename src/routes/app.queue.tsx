@@ -3,7 +3,7 @@ import { RefreshCcw, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { PageHeader } from "@/components/farmer/AppShell";
-import { EmptyState, Surface } from "@/components/farmer/bits";
+import { BackButton, EmptyState, Surface } from "@/components/farmer/bits";
 import { Progress } from "@/components/ui/progress";
 import { CENTRES } from "@/lib/farmer/data";
 import { centreName, formatDate, useFarmer } from "@/lib/farmer/store";
@@ -34,6 +34,7 @@ function QueuePage() {
   if (!active || !centre) {
     return (
       <div>
+        <BackButton />
         <PageHeader eyebrow="Live queue" title="Nothing in" accent="the queue." />
         <EmptyState title="No active booking" body="Book a slot to follow the queue in real time." />
       </div>
