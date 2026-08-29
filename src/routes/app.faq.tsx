@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
 import { PageHeader } from "@/components/farmer/AppShell";
-import { Surface } from "@/components/farmer/bits";
+import { BackButton, Surface } from "@/components/farmer/bits";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQS } from "@/lib/farmer/data";
 
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/app/faq")({
 function FaqPage() {
   return (
     <div>
+      <BackButton />
       <PageHeader
         eyebrow="Help"
         title="Questions we hear"

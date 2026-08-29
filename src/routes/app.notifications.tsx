@@ -3,7 +3,7 @@ import { Bell, CalendarCheck, CreditCard, Megaphone } from "lucide-react";
 import { useEffect } from "react";
 
 import { PageHeader } from "@/components/farmer/AppShell";
-import { EmptyState, Surface } from "@/components/farmer/bits";
+import { BackButton, EmptyState, Surface } from "@/components/farmer/bits";
 import { useFarmer } from "@/lib/farmer/store";
 
 export const Route = createFileRoute("/app/notifications")({
@@ -28,6 +28,7 @@ function NotificationsPage() {
 
   return (
     <div>
+      <BackButton />
       <PageHeader eyebrow="Notifications" title="What changed" accent="today." />
 
       {state.notifications.length === 0 ? (
