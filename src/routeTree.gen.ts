@@ -23,6 +23,7 @@ import { Route as AppNotificationsRouteImport } from './routes/app.notifications
 import { Route as AppPaymentRouteImport } from './routes/app.payment'
 import { Route as AppPaymentsCompletedRouteImport } from './routes/app.payments-completed'
 import { Route as AppProcurementRouteImport } from './routes/app.procurement'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppQueueRouteImport } from './routes/app.queue'
 import { Route as AppTokenRouteImport } from './routes/app.token'
 
@@ -96,6 +97,11 @@ const AppProcurementRoute = AppProcurementRouteImport.update({
   path: '/procurement',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppQueueRoute = AppQueueRouteImport.update({
   id: '/queue',
   path: '/queue',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
   '/app/': typeof AppIndexRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
   '/app': typeof AppIndexRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/app/payment': typeof AppPaymentRoute
   '/app/payments-completed': typeof AppPaymentsCompletedRoute
   '/app/procurement': typeof AppProcurementRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/queue': typeof AppQueueRoute
   '/app/token': typeof AppTokenRoute
   '/app/': typeof AppIndexRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
+    | '/app/profile'
     | '/app/queue'
     | '/app/token'
     | '/app/'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
+    | '/app/profile'
     | '/app/queue'
     | '/app/token'
     | '/app'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/app/payment'
     | '/app/payments-completed'
     | '/app/procurement'
+    | '/app/profile'
     | '/app/queue'
     | '/app/token'
     | '/app/'
@@ -325,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProcurementRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/queue': {
       id: '/app/queue'
       path: '/queue'
@@ -351,6 +370,7 @@ interface AppRouteChildren {
   AppPaymentRoute: typeof AppPaymentRoute
   AppPaymentsCompletedRoute: typeof AppPaymentsCompletedRoute
   AppProcurementRoute: typeof AppProcurementRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppQueueRoute: typeof AppQueueRoute
   AppTokenRoute: typeof AppTokenRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -365,6 +385,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPaymentRoute: AppPaymentRoute,
   AppPaymentsCompletedRoute: AppPaymentsCompletedRoute,
   AppProcurementRoute: AppProcurementRoute,
+  AppProfileRoute: AppProfileRoute,
   AppQueueRoute: AppQueueRoute,
   AppTokenRoute: AppTokenRoute,
   AppIndexRoute: AppIndexRoute,
