@@ -71,6 +71,7 @@ export type Complaint = {
 type State = {
   language: LanguageCode;
   authenticated: boolean;
+  userId: string | null;
   profile: Profile | null;
   bank: BankDetails | null;
   bookings: Booking[];
@@ -78,11 +79,30 @@ type State = {
   complaints: Complaint[];
 };
 
-const STORAGE_KEY = "smartfarmer.v1";
+/** Everything that belongs to one farmer account. */
+type UserData = {
+  id: string;
+  profile: Profile | null;
+  bank: BankDetails | null;
+  bookings: Booking[];
+  notifications: AppNotification[];
+  complaints: Complaint[];
+};
+
+type Root = {
+  language: LanguageCode;
+  currentUserId: string | null;
+  authenticated: boolean;
+  users: Record<string, UserData>;
+};
+
+const STORAGE_KEY = "smartfarmer.v2";
+const LEGACY_KEY = "smartfarmer.v1";
 
 const initialState: State = {
   language: "en",
   authenticated: false,
+  userId: null,
   profile: null,
   bank: null,
   bookings: [],
@@ -90,10 +110,12 @@ const initialState: State = {
   complaints: [],
 };
 
-function iso(daysFromNow: number) {
-  const d = new Date();
-  d.setDate(d.getDate() + daysFromNow);
-  return d.toISOString().slice(0, 10);
+function emptyUser(id: string, profile: Profile | null): UserData {
+  return { id, profile, bank: null, bookings: [], notifications: [], complaints: [] };
+}
+
+function userIdForMobile(mobile: string) {
+  return `u_${mobile}`;
 }
 
 function uid(prefix: string) {
@@ -105,98 +127,51 @@ export function amountFor(cropId: string, quantity: number) {
   return Math.round((crop?.ratePerQuintal ?? 2000) * quantity);
 }
 
-/** Demo history so status pages are meaningful on a fresh account. */
-function seedData(): Pick<State, "bookings" | "notifications"> {
-  const bookings: Booking[] = [
-    {
-      id: uid("bk"),
-      token: "A-124",
-      centreId: "c1",
-      cropId: "rice",
-      quantity: 5,
-      date: iso(0),
-      slot: "10:45 AM",
-      status: "in_progress",
-      procurement: "arrived",
-      payment: "pending",
-      amount: amountFor("rice", 5),
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: uid("bk"),
-      token: "A-092",
-      centreId: "c2",
-      cropId: "maize",
-      quantity: 8,
-      date: iso(-9),
-      slot: "09:00 AM",
-      status: "completed",
-      procurement: "completed",
-      payment: "processing",
-      amount: amountFor("maize", 8),
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: uid("bk"),
-      token: "B-311",
-      centreId: "c3",
-      cropId: "cotton",
-      quantity: 3,
-      date: iso(-24),
-      slot: "01:00 PM",
-      status: "completed",
-      procurement: "completed",
-      payment: "paid",
-      amount: amountFor("cotton", 3),
-      paidOn: iso(-21),
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: uid("bk"),
-      token: "B-208",
-      centreId: "c1",
-      cropId: "wheat",
-      quantity: 6,
-      date: iso(-48),
-      slot: "08:00 AM",
-      status: "completed",
-      procurement: "completed",
-      payment: "paid",
-      amount: amountFor("wheat", 6),
-      paidOn: iso(-45),
-      createdAt: new Date().toISOString(),
-    },
-  ];
+function loadRoot(): Root {
+  const empty: Root = { language: "en", currentUserId: null, authenticated: false, users: {} };
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { ...empty, ...(JSON.parse(raw) as Root) };
 
-  const notifications: AppNotification[] = [
-    {
-      id: uid("nt"),
-      kind: "reminder",
-      title: "Leave by 10:05 AM",
-      body: "Traffic is light on Canal Bund Road. Your slot at Sri Sai Procurement Centre is at 10:45 AM.",
-      at: new Date().toISOString(),
-      read: false,
-    },
-    {
-      id: uid("nt"),
-      kind: "payment",
-      title: "Payment processing",
-      body: "₹16,720 for token A-092 is being processed. Usually within 2 working days.",
-      at: new Date(Date.now() - 864e5).toISOString(),
-      read: false,
-    },
-    {
-      id: uid("nt"),
-      kind: "announcement",
-      title: "Extra slots added at Centre B",
-      body: "Market Yard centre now accepts arrivals until 6:00 PM through the season.",
-      at: new Date(Date.now() - 3 * 864e5).toISOString(),
-      read: true,
-    },
-  ];
-
-  return { bookings, notifications };
+    // One-time migration: keep any pre-existing single-user data intact.
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      const old = JSON.parse(legacy) as Partial<State> & { profile?: Profile | null };
+      if (old.profile?.mobile) {
+        const id = userIdForMobile(old.profile.mobile);
+        empty.users[id] = {
+          id,
+          profile: old.profile,
+          bank: old.bank ?? null,
+          bookings: old.bookings ?? [],
+          notifications: old.notifications ?? [],
+          complaints: old.complaints ?? [],
+        };
+        empty.currentUserId = id;
+        empty.authenticated = old.authenticated ?? false;
+      }
+      empty.language = old.language ?? "en";
+    }
+  } catch {
+    /* ignore corrupt storage */
+  }
+  return empty;
 }
+
+function stateFromRoot(root: Root): State {
+  const user = root.currentUserId ? root.users[root.currentUserId] : undefined;
+  return {
+    language: root.language,
+    authenticated: root.authenticated && !!user,
+    userId: user?.id ?? null,
+    profile: user?.profile ?? null,
+    bank: user?.bank ?? null,
+    bookings: user?.bookings ?? [],
+    notifications: user?.notifications ?? [],
+    complaints: user?.complaints ?? [],
+  };
+}
+
 
 type Ctx = {
   hydrated: boolean;
