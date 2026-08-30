@@ -71,6 +71,7 @@ export type Complaint = {
 type State = {
   language: LanguageCode;
   authenticated: boolean;
+  userId: string | null;
   profile: Profile | null;
   bank: BankDetails | null;
   bookings: Booking[];
@@ -78,11 +79,30 @@ type State = {
   complaints: Complaint[];
 };
 
-const STORAGE_KEY = "smartfarmer.v1";
+/** Everything that belongs to one farmer account. */
+type UserData = {
+  id: string;
+  profile: Profile | null;
+  bank: BankDetails | null;
+  bookings: Booking[];
+  notifications: AppNotification[];
+  complaints: Complaint[];
+};
+
+type Root = {
+  language: LanguageCode;
+  currentUserId: string | null;
+  authenticated: boolean;
+  users: Record<string, UserData>;
+};
+
+const STORAGE_KEY = "smartfarmer.v2";
+const LEGACY_KEY = "smartfarmer.v1";
 
 const initialState: State = {
   language: "en",
   authenticated: false,
+  userId: null,
   profile: null,
   bank: null,
   bookings: [],
@@ -90,10 +110,12 @@ const initialState: State = {
   complaints: [],
 };
 
-function iso(daysFromNow: number) {
-  const d = new Date();
-  d.setDate(d.getDate() + daysFromNow);
-  return d.toISOString().slice(0, 10);
+function emptyUser(id: string, profile: Profile | null): UserData {
+  return { id, profile, bank: null, bookings: [], notifications: [], complaints: [] };
+}
+
+function userIdForMobile(mobile: string) {
+  return `u_${mobile}`;
 }
 
 function uid(prefix: string) {
@@ -105,98 +127,51 @@ export function amountFor(cropId: string, quantity: number) {
   return Math.round((crop?.ratePerQuintal ?? 2000) * quantity);
 }
 
-/** Demo history so status pages are meaningful on a fresh account. */
-function seedData(): Pick<State, "bookings" | "notifications"> {
-  const bookings: Booking[] = [
-    {
-      id: uid("bk"),
-      token: "A-124",
-      centreId: "c1",
-      cropId: "rice",
-      quantity: 5,
-      date: iso(0),
-      slot: "10:45 AM",
-      status: "in_progress",
-      procurement: "arrived",
-      payment: "pending",
-      amount: amountFor("rice", 5),
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: uid("bk"),
-      token: "A-092",
-      centreId: "c2",
-      cropId: "maize",
-      quantity: 8,
-      date: iso(-9),
-      slot: "09:00 AM",
-      status: "completed",
-      procurement: "completed",
-      payment: "processing",
-      amount: amountFor("maize", 8),
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: uid("bk"),
-      token: "B-311",
-      centreId: "c3",
-      cropId: "cotton",
-      quantity: 3,
-      date: iso(-24),
-      slot: "01:00 PM",
-      status: "completed",
-      procurement: "completed",
-      payment: "paid",
-      amount: amountFor("cotton", 3),
-      paidOn: iso(-21),
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: uid("bk"),
-      token: "B-208",
-      centreId: "c1",
-      cropId: "wheat",
-      quantity: 6,
-      date: iso(-48),
-      slot: "08:00 AM",
-      status: "completed",
-      procurement: "completed",
-      payment: "paid",
-      amount: amountFor("wheat", 6),
-      paidOn: iso(-45),
-      createdAt: new Date().toISOString(),
-    },
-  ];
+function loadRoot(): Root {
+  const empty: Root = { language: "en", currentUserId: null, authenticated: false, users: {} };
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { ...empty, ...(JSON.parse(raw) as Root) };
 
-  const notifications: AppNotification[] = [
-    {
-      id: uid("nt"),
-      kind: "reminder",
-      title: "Leave by 10:05 AM",
-      body: "Traffic is light on Canal Bund Road. Your slot at Sri Sai Procurement Centre is at 10:45 AM.",
-      at: new Date().toISOString(),
-      read: false,
-    },
-    {
-      id: uid("nt"),
-      kind: "payment",
-      title: "Payment processing",
-      body: "₹16,720 for token A-092 is being processed. Usually within 2 working days.",
-      at: new Date(Date.now() - 864e5).toISOString(),
-      read: false,
-    },
-    {
-      id: uid("nt"),
-      kind: "announcement",
-      title: "Extra slots added at Centre B",
-      body: "Market Yard centre now accepts arrivals until 6:00 PM through the season.",
-      at: new Date(Date.now() - 3 * 864e5).toISOString(),
-      read: true,
-    },
-  ];
-
-  return { bookings, notifications };
+    // One-time migration: keep any pre-existing single-user data intact.
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      const old = JSON.parse(legacy) as Partial<State> & { profile?: Profile | null };
+      if (old.profile?.mobile) {
+        const id = userIdForMobile(old.profile.mobile);
+        empty.users[id] = {
+          id,
+          profile: old.profile,
+          bank: old.bank ?? null,
+          bookings: old.bookings ?? [],
+          notifications: old.notifications ?? [],
+          complaints: old.complaints ?? [],
+        };
+        empty.currentUserId = id;
+        empty.authenticated = old.authenticated ?? false;
+      }
+      empty.language = old.language ?? "en";
+    }
+  } catch {
+    /* ignore corrupt storage */
+  }
+  return empty;
 }
+
+function stateFromRoot(root: Root): State {
+  const user = root.currentUserId ? root.users[root.currentUserId] : undefined;
+  return {
+    language: root.language,
+    authenticated: root.authenticated && !!user,
+    userId: user?.id ?? null,
+    profile: user?.profile ?? null,
+    bank: user?.bank ?? null,
+    bookings: user?.bookings ?? [],
+    notifications: user?.notifications ?? [],
+    complaints: user?.complaints ?? [],
+  };
+}
+
 
 type Ctx = {
   hydrated: boolean;
@@ -218,30 +193,40 @@ type Ctx = {
 const FarmerContext = createContext<Ctx | null>(null);
 
 export function FarmerProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>(initialState);
+  const [root, setRoot] = useState<Root>({ language: "en", currentUserId: null, authenticated: false, users: {} });
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setState({ ...initialState, ...(JSON.parse(raw) as State) });
-    } catch {
-      /* ignore corrupt storage */
-    }
+    setRoot(loadRoot());
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state, hydrated]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(root));
+  }, [root, hydrated]);
 
-  const notify = useCallback((n: Omit<AppNotification, "id" | "at" | "read">) => {
-    setState((s) => ({
-      ...s,
-      notifications: [{ ...n, id: uid("nt"), at: new Date().toISOString(), read: false }, ...s.notifications],
-    }));
+  /** Applies a patch to the currently signed-in user's slice only. */
+  const patchUser = useCallback((fn: (u: UserData) => UserData) => {
+    setRoot((r) => {
+      const id = r.currentUserId;
+      if (!id) return r;
+      const current = r.users[id] ?? emptyUser(id, null);
+      return { ...r, users: { ...r.users, [id]: fn(current) } };
+    });
   }, []);
+
+  const notify = useCallback(
+    (n: Omit<AppNotification, "id" | "at" | "read">) => {
+      patchUser((u) => ({
+        ...u,
+        notifications: [{ ...n, id: uid("nt"), at: new Date().toISOString(), read: false }, ...u.notifications],
+      }));
+    },
+    [patchUser],
+  );
+
+  const state = useMemo(() => (hydrated ? stateFromRoot(root) : initialState), [root, hydrated]);
 
   const value = useMemo<Ctx>(() => {
     const t = (key: string) => translate(state.language, key);
@@ -250,24 +235,25 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
       hydrated,
       state,
       t,
-      setLanguage: (language) => setState((s) => ({ ...s, language })),
+      setLanguage: (language) => setRoot((r) => ({ ...r, language })),
       register: (profile) =>
-        setState((s) => ({
-          ...s,
-          profile,
-          ...(s.bookings.length === 0 ? seedData() : {}),
-        })),
+        setRoot((r) => {
+          const id = userIdForMobile(profile.mobile);
+          const existing = r.users[id];
+          // Existing accounts keep their data; brand-new ones start empty.
+          const user = existing ? { ...existing, profile } : emptyUser(id, profile);
+          return { ...r, currentUserId: id, authenticated: false, users: { ...r.users, [id]: user } };
+        }),
       login: (mobile) =>
-        setState((s) => ({
-          ...s,
-          authenticated: true,
-          profile: s.profile ?? { name: "Farmer", mobile, village: "" },
-          ...(s.bookings.length === 0 ? seedData() : {}),
-        })),
-      logout: () => setState((s) => ({ ...s, authenticated: false })),
+        setRoot((r) => {
+          const id = userIdForMobile(mobile);
+          const user = r.users[id] ?? emptyUser(id, { name: "Farmer", mobile, village: "" });
+          return { ...r, currentUserId: id, authenticated: true, users: { ...r.users, [id]: user } };
+        }),
+      logout: () => setRoot((r) => ({ ...r, authenticated: false, currentUserId: null })),
       updateProfile: (patch) =>
-        setState((s) => ({ ...s, profile: { ...(s.profile ?? { name: "", mobile: "", village: "" }), ...patch } })),
-      saveBank: (bank) => setState((s) => ({ ...s, bank })),
+        patchUser((u) => ({ ...u, profile: { ...(u.profile ?? { name: "", mobile: "", village: "" }), ...patch } })),
+      saveBank: (bank) => patchUser((u) => ({ ...u, bank })),
       createBooking: (input) => {
         const booking: Booking = {
           ...input,
@@ -279,7 +265,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
           amount: amountFor(input.cropId, input.quantity),
           createdAt: new Date().toISOString(),
         };
-        setState((s) => ({ ...s, bookings: [booking, ...s.bookings] }));
+        patchUser((u) => ({ ...u, bookings: [booking, ...u.bookings] }));
         notify({
           kind: "booking",
           title: `Token ${booking.token} confirmed`,
@@ -288,18 +274,18 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
         return booking;
       },
       cancelBooking: (id) => {
-        setState((s) => ({
-          ...s,
-          bookings: s.bookings.map((b) =>
+        patchUser((u) => ({
+          ...u,
+          bookings: u.bookings.map((b) =>
             b.id === id ? { ...b, status: "cancelled", procurement: "cancelled" } : b,
           ),
         }));
         notify({ kind: "booking", title: "Booking cancelled", body: "Your slot has been released for other farmers." });
       },
       rescheduleBooking: (id, patch) => {
-        setState((s) => ({
-          ...s,
-          bookings: s.bookings.map((b) =>
+        patchUser((u) => ({
+          ...u,
+          bookings: u.bookings.map((b) =>
             b.id === id
               ? {
                   ...b,
@@ -315,19 +301,20 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
         notify({ kind: "booking", title: "Booking rescheduled", body: `New slot: ${patch.date} at ${patch.slot}.` });
       },
       addComplaint: (c) => {
-        setState((s) => ({
-          ...s,
-          complaints: [{ ...c, id: uid("cm"), at: new Date().toISOString(), status: "open" }, ...s.complaints],
+        patchUser((u) => ({
+          ...u,
+          complaints: [{ ...c, id: uid("cm"), at: new Date().toISOString(), status: "open" }, ...u.complaints],
         }));
         notify({ kind: "announcement", title: "Complaint received", body: "Our support team will reply within 24 hours." });
       },
       markNotificationsRead: () =>
-        setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) })),
+        patchUser((u) => ({ ...u, notifications: u.notifications.map((n) => ({ ...n, read: true })) })),
     };
-  }, [state, hydrated, notify]);
+  }, [state, hydrated, notify, patchUser]);
 
   return <FarmerContext.Provider value={value}>{children}</FarmerContext.Provider>;
 }
+
 
 export function useFarmer() {
   const ctx = useContext(FarmerContext);
