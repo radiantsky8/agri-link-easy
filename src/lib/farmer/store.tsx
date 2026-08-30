@@ -193,30 +193,40 @@ type Ctx = {
 const FarmerContext = createContext<Ctx | null>(null);
 
 export function FarmerProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>(initialState);
+  const [root, setRoot] = useState<Root>({ language: "en", currentUserId: null, authenticated: false, users: {} });
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setState({ ...initialState, ...(JSON.parse(raw) as State) });
-    } catch {
-      /* ignore corrupt storage */
-    }
+    setRoot(loadRoot());
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state, hydrated]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(root));
+  }, [root, hydrated]);
 
-  const notify = useCallback((n: Omit<AppNotification, "id" | "at" | "read">) => {
-    setState((s) => ({
-      ...s,
-      notifications: [{ ...n, id: uid("nt"), at: new Date().toISOString(), read: false }, ...s.notifications],
-    }));
+  /** Applies a patch to the currently signed-in user's slice only. */
+  const patchUser = useCallback((fn: (u: UserData) => UserData) => {
+    setRoot((r) => {
+      const id = r.currentUserId;
+      if (!id) return r;
+      const current = r.users[id] ?? emptyUser(id, null);
+      return { ...r, users: { ...r.users, [id]: fn(current) } };
+    });
   }, []);
+
+  const notify = useCallback(
+    (n: Omit<AppNotification, "id" | "at" | "read">) => {
+      patchUser((u) => ({
+        ...u,
+        notifications: [{ ...n, id: uid("nt"), at: new Date().toISOString(), read: false }, ...u.notifications],
+      }));
+    },
+    [patchUser],
+  );
+
+  const state = useMemo(() => (hydrated ? stateFromRoot(root) : initialState), [root, hydrated]);
 
   const value = useMemo<Ctx>(() => {
     const t = (key: string) => translate(state.language, key);
@@ -225,24 +235,25 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
       hydrated,
       state,
       t,
-      setLanguage: (language) => setState((s) => ({ ...s, language })),
+      setLanguage: (language) => setRoot((r) => ({ ...r, language })),
       register: (profile) =>
-        setState((s) => ({
-          ...s,
-          profile,
-          ...(s.bookings.length === 0 ? seedData() : {}),
-        })),
+        setRoot((r) => {
+          const id = userIdForMobile(profile.mobile);
+          const existing = r.users[id];
+          // Existing accounts keep their data; brand-new ones start empty.
+          const user = existing ? { ...existing, profile } : emptyUser(id, profile);
+          return { ...r, currentUserId: id, authenticated: false, users: { ...r.users, [id]: user } };
+        }),
       login: (mobile) =>
-        setState((s) => ({
-          ...s,
-          authenticated: true,
-          profile: s.profile ?? { name: "Farmer", mobile, village: "" },
-          ...(s.bookings.length === 0 ? seedData() : {}),
-        })),
-      logout: () => setState((s) => ({ ...s, authenticated: false })),
+        setRoot((r) => {
+          const id = userIdForMobile(mobile);
+          const user = r.users[id] ?? emptyUser(id, { name: "Farmer", mobile, village: "" });
+          return { ...r, currentUserId: id, authenticated: true, users: { ...r.users, [id]: user } };
+        }),
+      logout: () => setRoot((r) => ({ ...r, authenticated: false, currentUserId: null })),
       updateProfile: (patch) =>
-        setState((s) => ({ ...s, profile: { ...(s.profile ?? { name: "", mobile: "", village: "" }), ...patch } })),
-      saveBank: (bank) => setState((s) => ({ ...s, bank })),
+        patchUser((u) => ({ ...u, profile: { ...(u.profile ?? { name: "", mobile: "", village: "" }), ...patch } })),
+      saveBank: (bank) => patchUser((u) => ({ ...u, bank })),
       createBooking: (input) => {
         const booking: Booking = {
           ...input,
@@ -254,7 +265,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
           amount: amountFor(input.cropId, input.quantity),
           createdAt: new Date().toISOString(),
         };
-        setState((s) => ({ ...s, bookings: [booking, ...s.bookings] }));
+        patchUser((u) => ({ ...u, bookings: [booking, ...u.bookings] }));
         notify({
           kind: "booking",
           title: `Token ${booking.token} confirmed`,
@@ -263,18 +274,18 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
         return booking;
       },
       cancelBooking: (id) => {
-        setState((s) => ({
-          ...s,
-          bookings: s.bookings.map((b) =>
+        patchUser((u) => ({
+          ...u,
+          bookings: u.bookings.map((b) =>
             b.id === id ? { ...b, status: "cancelled", procurement: "cancelled" } : b,
           ),
         }));
         notify({ kind: "booking", title: "Booking cancelled", body: "Your slot has been released for other farmers." });
       },
       rescheduleBooking: (id, patch) => {
-        setState((s) => ({
-          ...s,
-          bookings: s.bookings.map((b) =>
+        patchUser((u) => ({
+          ...u,
+          bookings: u.bookings.map((b) =>
             b.id === id
               ? {
                   ...b,
@@ -290,19 +301,20 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
         notify({ kind: "booking", title: "Booking rescheduled", body: `New slot: ${patch.date} at ${patch.slot}.` });
       },
       addComplaint: (c) => {
-        setState((s) => ({
-          ...s,
-          complaints: [{ ...c, id: uid("cm"), at: new Date().toISOString(), status: "open" }, ...s.complaints],
+        patchUser((u) => ({
+          ...u,
+          complaints: [{ ...c, id: uid("cm"), at: new Date().toISOString(), status: "open" }, ...u.complaints],
         }));
         notify({ kind: "announcement", title: "Complaint received", body: "Our support team will reply within 24 hours." });
       },
       markNotificationsRead: () =>
-        setState((s) => ({ ...s, notifications: s.notifications.map((n) => ({ ...n, read: true })) })),
+        patchUser((u) => ({ ...u, notifications: u.notifications.map((n) => ({ ...n, read: true })) })),
     };
-  }, [state, hydrated, notify]);
+  }, [state, hydrated, notify, patchUser]);
 
   return <FarmerContext.Provider value={value}>{children}</FarmerContext.Provider>;
 }
+
 
 export function useFarmer() {
   const ctx = useContext(FarmerContext);
